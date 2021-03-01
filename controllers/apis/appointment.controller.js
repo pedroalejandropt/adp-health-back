@@ -1,5 +1,6 @@
 const db = require("../../models");
 const Appointment = db.appointments;
+const User = db.users;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Appointment
@@ -41,10 +42,11 @@ exports.findAll = (req, res) => {
   } : null;
 
   Appointment.findAll({
+      include: [{ model: db.users }],
       where: condition
     })
-    .then(data => {
-      res.send(data);
+    .then((data) => {
+        res.send(data);
     })
     .catch(err => {
       res.status(500).send({
@@ -56,11 +58,15 @@ exports.findAll = (req, res) => {
 // Retrieve all Appointments from the database.
 exports.findAllActive = (req, res) => {
   const state = true;
-  var condition = state ? {
-    state: state
+  const user = req.params.id;
+
+  var condition = state && user ? {
+    state: state,
+    fk_user: user
   } : null;
 
   Appointment.findAll({
+      include: [{ model: db.users }],
       where: condition
     })
     .then(data => {
