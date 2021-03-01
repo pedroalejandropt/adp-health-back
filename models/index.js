@@ -25,7 +25,9 @@ db.roles = require("./role.model.js")(sequelize, Sequelize);
 db.appointments = require("./appointment.model.js")(sequelize, Sequelize);
 db.appointment_novelties = require("./appointment-novelty.model.js")(sequelize, Sequelize);
 
+db.roles.hasMany(db.users);
 db.users.belongsTo(db.roles, {foreignKey: 'fk_role', targetKey: 'id'});
+db.users.hasMany(db.appointments);
 db.appointments.belongsTo(db.users, {foreignKey: 'fk_user', targetKey: 'id'});
 db.appointment_novelties.belongsTo(db.appointments, {foreignKey: 'fk_appointment', targetKey: 'id'});
 
