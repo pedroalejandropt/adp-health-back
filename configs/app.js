@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dbConfig = require("../models");
 const cors = require('cors')
+const seq = require("../controllers/create/index.js");
 
 module.exports = function () {
     let server = express(),
@@ -21,7 +22,10 @@ module.exports = function () {
         server.use(cors());
 
         //connect the database
-        dbConfig.sequelize.sync(/* { force: true } */);
+        const force = true;
+        dbConfig.sequelize.sync({ force: force }).then(async () => {
+            (force) ? seq.create() : null
+        });
 
         // Set up routes
         routes.init(server);
