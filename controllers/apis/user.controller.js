@@ -33,7 +33,7 @@ exports.create = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the User."
+        message: (err.errors[0].type == 'unique violation') ? "Mail already in used" : err.message || "Some error occurred while creating the User."
       });
     });
 };
@@ -132,24 +132,28 @@ exports.login = (req, res) => {
     return;
   }
   
-  const email = req.query.email;
-  const password = req.query.password;
+  const email = req.body.email;
+  const password = req.body.password;
+
+  console.log(email);
+  console.log(password);
 
   var condition = email && password ? {
     email: {
-      [Op.iLike]: `%${email}%`
+      [Op.eq]: `${email}`
     },
     password: {
-      [Op.iLike]: `%${password}%`
+      [Op.eq]: `${password}`
     }
   } : null;
 
   User.findAll({
-    where: condition
+    where: condition,
+    include: [{ model: db.roles }]
     })
     .then(data => {
-      console.log(data);
-      (data) ?
+      //console.log(data);
+      (data[0]) ?
       res.send([data[0]]):
         res.status(404).send({
           message: err.message || "User doesn't exist"
