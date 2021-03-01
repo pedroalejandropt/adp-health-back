@@ -8,7 +8,7 @@ router.post("/", appointments.create);
 router.get("/", appointments.findAll);
 
 // Retrieve all Appointments Active
-router.get("/active", appointments.findAllActive);
+router.get("/active/:id", appointments.findAllActive);
 
 // Retrieve a single appointment with id
 router.get("/:id", appointments.findOne);
